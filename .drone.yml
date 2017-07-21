@@ -9,7 +9,8 @@ pipeline:
     # bingehack prep
       - apt-get update -qq
       - apt-get install -qq git cmake ninja-build clang python uuid-dev libicu-dev icu-devtools libbsd-dev libedit-dev libxml2-dev libsqlite3-dev swig libpython-dev libncurses5-dev pkg-config libblocksruntime-dev libcurl4-openssl-dev autoconf libtool systemtap-sdt-dev tzdata
-      - cd utils
-      - ./update-checkout --clone-with-ssh
-      - ./build-script -r
-      - ./build-script -t
+      - mkdir utils/tmp
+      - cd utils/tmp
+      - ../update-checkout --clone
+      - ../build-script -r
+      - ../build-script -t
