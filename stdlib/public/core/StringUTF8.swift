@@ -381,7 +381,7 @@ extension String {
   ///         let adjective = String(picnicGuest.utf8[..<i])
   ///         print(adjective)
   ///     }
-  ///     // Prints "Optional(Deserving)"
+  ///     // Prints "Deserving"
   ///
   /// The `adjective` constant is created by calling this initializer with a
   /// slice of the `picnicGuest.utf8` view.
@@ -391,6 +391,7 @@ extension String {
     self = String(utf8._core)
   }
 
+  /*
   /// Creates a string corresponding to the given sequence of UTF-8 code units.
   ///
   /// If `utf8` is an ill-formed UTF-8 code sequence, the result is `nil`.
@@ -409,8 +410,9 @@ extension String {
   /// slice of the `picnicGuest.utf8` view.
   ///
   /// - Parameter utf8: A UTF-8 code sequence.
+  @available(swift, deprecated: 3.2, obsoleted: 4.0)
   public init?(_ utf8: UTF8View.SubSequence) {
-    let wholeString = String(utf8.base._core)
+    let wholeString = utf8._wholeString
     if let start = utf8.startIndex.samePosition(in: wholeString),
        let end = utf8.endIndex.samePosition(in: wholeString) {
       self = wholeString[start..<end]
@@ -418,7 +420,8 @@ extension String {
     }
     return nil
   }
-
+  */
+  
   /// The index type for subscripting a string's `utf8` view.
   public typealias UTF8Index = UTF8View.Index
 }
@@ -651,17 +654,17 @@ extension String.UTF8View {
 //===--- Slicing Support --------------------------------------------------===//
 /// In Swift 3.2, in the absence of type context,
 ///
-///     someString.utf8[someString.startIndex..<someString.endIndex]
+///   someString.utf8[someString.utf8.startIndex..<someString.utf8.endIndex]
 ///
 /// was deduced to be of type `String.UTF8View`.  Provide a more-specific
 /// Swift-3-only `subscript` overload that continues to produce
 /// `String.UTF8View`.
 extension String.UTF8View {
-  public typealias SubSequence = BidirectionalSlice<String.UTF8View>
+  public typealias SubSequence = Substring.UTF8View
   
   @available(swift, introduced: 4)
   public subscript(r: Range<Index>) -> String.UTF8View.SubSequence {
-    return String.UTF8View.SubSequence(base: self, bounds: r)
+    return String.UTF8View.SubSequence(self, _bounds: r)
   }
 
   @available(swift, obsoleted: 4)
